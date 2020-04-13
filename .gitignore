@@ -16,4 +16,4 @@
 !/log/.keep
 /tmp
 
-/app/controllers/devise_fix/*
+/app/controllers/devise_fix

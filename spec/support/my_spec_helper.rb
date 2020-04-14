@@ -7,6 +7,6 @@ module MySpecHelper
   end
 end
 
-RSpec.configure do |c|
-  c.include MySpecHelper
+RSpec.configure do |config|
+  config.include MySpecHelper
 end

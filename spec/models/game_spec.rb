@@ -40,5 +40,14 @@ RSpec.describe Game, type: :model do
       expect(game_with_questions.status).to eq(:in_progress)
       expect(game_with_questions.finished?).to be_falsey
     end
+
+    it '.take_money!' do
+      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a[12]
+      game_with_questions.take_money!
+
+      expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.previous_level]
+      expect(user.balance).to eq game_with_questions.prize
+      expect(game_with_questions.finished?).to be_truthy
+    end
   end
 end

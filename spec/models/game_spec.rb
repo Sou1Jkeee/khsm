@@ -42,12 +42,21 @@ RSpec.describe Game, type: :model do
     end
 
     it '.take_money!' do
-      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a[12]
+      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a.sample
       game_with_questions.take_money!
 
-      expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.previous_level]
+      expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.current_level - 1]
       expect(user.balance).to eq game_with_questions.prize
       expect(game_with_questions.finished?).to be_truthy
+    end
+
+    it '.current_game_question' do
+      expect(game_with_questions.current_game_question).to eq(game_with_questions.game_questions[0])
+    end
+
+    it '.previous_level' do
+      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a.sample
+      expect(game_with_questions.previous_level).to eq(game_with_questions.current_level - 1)
     end
 
     context '.status' do

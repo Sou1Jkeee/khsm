@@ -42,7 +42,7 @@ RSpec.describe Game, type: :model do
     end
 
     it '.take_money!' do
-      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a.sample
+      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a[12]
       game_with_questions.take_money!
 
       expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.current_level - 1]
@@ -83,6 +83,30 @@ RSpec.describe Game, type: :model do
 
       it ':money' do
         expect(game_with_questions.status).to eq(:money)
+      end
+    end
+
+    context '.answer_current_question' do
+      let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
+
+      it 'false answer given' do
+        expect(game_with_questions.answer_current_question!('b')).not_to be(correct_answer)
+        expect(game_with_questions.finished?).to be_truthy
+        expect(game_with_questions.status).to eq(:fail)
+      end
+
+      it 'increase current_level' do
+        expect { game_with_questions.answer_current_question!(correct_answer) }
+                .to change(game_with_questions, :current_level)
+      end
+
+      it 'finished game' do
+        game_with_questions.current_level = Question::QUESTION_LEVELS.max
+
+        expect(game_with_questions.answer_current_question!(correct_answer)).to be_truthy
+        expect(game_with_questions.finished?).to be_truthy
+        expect(game_with_questions.status).to eq(:won)
+        expect(game_with_questions.prize).to eq(Game::PRIZES.last)
       end
     end
   end

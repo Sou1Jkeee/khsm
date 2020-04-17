@@ -50,6 +50,15 @@ RSpec.describe Game, type: :model do
       expect(game_with_questions.finished?).to be_truthy
     end
 
+    it '.current_game_question' do
+
+    end
+
+    it '.previous_level' do
+      game_with_questions.current_level = Question::QUESTION_LEVELS[5]
+      expect(game_with_questions.previous_level).to eq(Question::QUESTION_LEVELS[4])
+    end
+
     context '.status' do
       before(:each) do
         game_with_questions.finished_at = Time.now

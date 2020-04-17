@@ -24,10 +24,11 @@ RSpec.describe Game, type: :model do
     end
   end
 
-  describe 'game mechanics' do
+  describe 'Game mechanics' do
     it 'answer_correct_continues' do
       level = game_with_questions.current_level
       question = game_with_questions.current_game_question
+
       expect(game_with_questions.status).to eq(:in_progress)
 
       game_with_questions.answer_current_question!(question.correct_answer_key)
@@ -86,27 +87,43 @@ RSpec.describe Game, type: :model do
       end
     end
 
-    context '.answer_current_question' do
-      let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
+    describe '.answer_current_question!' do
+      context 'when answer is correct' do
+        let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
+        before { game_with_questions.answer_current_question!(correct_answer) }
 
-      it 'false answer given' do
-        expect(game_with_questions.answer_current_question!('b')).not_to be(correct_answer)
-        expect(game_with_questions.finished?).to be_truthy
-        expect(game_with_questions.status).to eq(:fail)
+        it 'and question is last' do
+          game_with_questions.current_level = Question::QUESTION_LEVELS.max
+
+          expect(game_with_questions.answer_current_question!(correct_answer)).to be true
+          expect(game_with_questions.finished?).to be true
+          expect(game_with_questions.status).to eq(:won)
+          expect(game_with_questions.prize).to eq(Game::PRIZES.last)
+        end
+
+        it 'and timeout' do
+          game_with_questions.created_at = 2.hour.ago
+
+          expect(game_with_questions.answer_current_question!(correct_answer)).to be false
+          expect(game_with_questions.finished?).to be true
+          expect(game_with_questions.status).to eq(:timeout)
+        end
+
+        it 'and change level' do
+          expect { game_with_questions.answer_current_question!(correct_answer) }
+                   .to change(game_with_questions, :current_level)
+        end
       end
 
-      it 'increase current_level' do
-        expect { game_with_questions.answer_current_question!(correct_answer) }
-                .to change(game_with_questions, :current_level)
-      end
+      context 'when answer is wrong' do
+        let(:wrong_answer) { 'wrong answer' }
+        before { game_with_questions.answer_current_question!(wrong_answer) }
 
-      it 'finished game' do
-        game_with_questions.current_level = Question::QUESTION_LEVELS.max
-
-        expect(game_with_questions.answer_current_question!(correct_answer)).to be_truthy
-        expect(game_with_questions.finished?).to be_truthy
-        expect(game_with_questions.status).to eq(:won)
-        expect(game_with_questions.prize).to eq(Game::PRIZES.last)
+        it 'and game status fail' do
+          expect(game_with_questions.answer_current_question!(wrong_answer)).to be false
+          expect(game_with_questions.finished?).to be true
+          expect(game_with_questions.status).to eq(:fail)
+        end
       end
     end
   end

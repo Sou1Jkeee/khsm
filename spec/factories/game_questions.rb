@@ -1,10 +1,3 @@
-# (c) goodprogrammer.ru
-#
-# Объявление фабрики для создания нужных в тестах объектов
-#
-# См. другие примеры:
-#
-# http://www.rubydoc.info/gems/factory_bot/file/GETTING_STARTED.md
 FactoryBot.define do
   factory :game_question do
     # Всегда одинаковое распределение ответов, в тестах удобнее детерминизм.

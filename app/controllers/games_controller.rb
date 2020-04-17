@@ -87,7 +87,6 @@ class GamesController < ApplicationController
     redirect_to game_path(@game), msg
   end
 
-
   private
 
   def redirect_from_finished_game!

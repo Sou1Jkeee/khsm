@@ -1,20 +1,14 @@
+require 'faker'
 
 FactoryBot.define do
   factory :question do
-    # Последовательность уникальных текстов вопроса
-    sequence(:text) { |n| "В каком году была космичесая одиссея #{n}?" }
+    sequence(:text) { |n| "#{Faker::ChuckNorris.fact} #{n}?" }
 
-    # Уровни генерим от 0 до 14 подряд
-    sequence(:level) { |n| n % 15}
+    sequence(:level) { |n| n % 15 }
 
-    # Ответы сделаем рандомными для красоты
-    answer1 {"#{rand(2001)}"}
-    answer2 {"#{rand(2001)}"}
-    answer3 {"#{rand(2001)}"}
-    answer4 {"#{rand(2001)}"}
+    answer1 { Faker::Number.number(digits: 4).to_s }
+    answer2 { Faker::Number.number(digits: 4).to_s }
+    answer3 { Faker::Number.number(digits: 4).to_s }
+    answer4 { Faker::Number.number(digits: 4).to_s }
   end
 end
-
-# PS: неплохой фильмец
-#
-# https://ru.wikipedia.org/wiki/Космическая_одиссея_2001_года

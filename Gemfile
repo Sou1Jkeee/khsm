@@ -21,6 +21,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_bot_rails'
   gem 'shoulda-matchers'
+  gem 'faker'
 
   # Гем, который использует rspec, чтобы смотреть наш сайт
   gem 'capybara'

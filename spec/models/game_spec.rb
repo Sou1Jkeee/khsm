@@ -2,10 +2,10 @@ require 'rails_helper'
 require 'support/my_spec_helper'
 
 RSpec.describe Game, type: :model do
-  let(:user) { create(:user)}
+  let(:user) { create(:user) }
   let(:game_with_questions) { create(:game_with_questions, user: user) }
 
-  context 'Game Factory' do
+  describe 'Game Factory' do
     it 'Game.create_game_for_user! new correct game' do
       generate_questions(60)
 
@@ -24,7 +24,7 @@ RSpec.describe Game, type: :model do
     end
   end
 
-  context 'game mechanics' do
+  describe 'game mechanics' do
     it 'answer_correct_continues' do
       level = game_with_questions.current_level
       question = game_with_questions.current_game_question
@@ -48,6 +48,33 @@ RSpec.describe Game, type: :model do
       expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.previous_level]
       expect(user.balance).to eq game_with_questions.prize
       expect(game_with_questions.finished?).to be_truthy
+    end
+
+    context '.status' do
+      before(:each) do
+        game_with_questions.finished_at = Time.now
+        expect(game_with_questions.finished?).to be_truthy
+      end
+
+      it ':won' do
+        game_with_questions.current_level = Question::QUESTION_LEVELS.max + 1
+        expect(game_with_questions.status).to eq(:won)
+      end
+
+      it ':fail' do
+        game_with_questions.is_failed = true
+        expect(game_with_questions.status).to eq(:fail)
+      end
+
+      it ':timeout' do
+        game_with_questions.created_at = 2.hours.ago
+        game_with_questions.is_failed = true
+        expect(game_with_questions.status).to eq(:timeout)
+      end
+
+      it ':money' do
+        expect(game_with_questions.status).to eq(:money)
+      end
     end
   end
 end

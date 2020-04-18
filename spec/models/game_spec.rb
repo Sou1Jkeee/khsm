@@ -39,17 +39,29 @@ RSpec.describe Game, type: :model do
       expect(game_with_questions.current_game_question).not_to eq(question)
 
       expect(game_with_questions.status).to eq(:in_progress)
-      expect(game_with_questions.finished?).to be_falsey
+      expect(game_with_questions.finished?).to be false
     end
 
-    it '.take_money!' do
-      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a[12]
-      game_with_questions.take_money!
+    describe '.take_money!' do
+        it 'when level is first' do
+        game_with_questions.current_level = Question::QUESTION_LEVELS.first
+        game_with_questions.take_money!
 
-      expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.current_level - 1]
-      expect(user.balance).to eq game_with_questions.prize
-      expect(game_with_questions.finished?).to be_truthy
+        expect(game_with_questions.prize).to eq(0)
+        expect(user.balance).to eq game_with_questions.prize
+        expect(game_with_questions.finished?).to be true
+      end
+
+      it 'and after first level' do
+        game_with_questions.current_level = Question::QUESTION_LEVELS.to_a[12]
+        game_with_questions.take_money!
+
+        expect(game_with_questions.prize).to eq Game::PRIZES[game_with_questions.current_level - 1]
+        expect(user.balance).to eq game_with_questions.prize
+        expect(game_with_questions.finished?).to be true
+      end
     end
+
 
     it '.current_game_question' do
       expect(game_with_questions.current_game_question).to eq(game_with_questions.game_questions[0])
@@ -63,7 +75,7 @@ RSpec.describe Game, type: :model do
     context '.status' do
       before(:each) do
         game_with_questions.finished_at = Time.now
-        expect(game_with_questions.finished?).to be_truthy
+        expect(game_with_questions.finished?).to be true
       end
 
       it ':won' do
@@ -90,7 +102,6 @@ RSpec.describe Game, type: :model do
     describe '.answer_current_question!' do
       context 'when answer is correct' do
         let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
-        before { game_with_questions.answer_current_question!(correct_answer) }
 
         it 'and question is last' do
           game_with_questions.current_level = Question::QUESTION_LEVELS.max

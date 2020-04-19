@@ -77,7 +77,7 @@ RSpec.describe Game, type: :model do
       context 'during the game' do
         let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
 
-        it 'right value for ech level' do
+        it 'right value for each level' do
           Question::QUESTION_LEVELS.max.times do
             game_with_questions.answer_current_question!(correct_answer)
             expect(game_with_questions.previous_level).to eq(game_with_questions.current_level - 1)

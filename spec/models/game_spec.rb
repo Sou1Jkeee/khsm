@@ -43,7 +43,7 @@ RSpec.describe Game, type: :model do
     end
 
     describe '.take_money!' do
-        it 'when level is first' do
+      it 'when level is first' do
         game_with_questions.current_level = Question::QUESTION_LEVELS.first
         game_with_questions.take_money!
 
@@ -63,13 +63,27 @@ RSpec.describe Game, type: :model do
     end
 
 
-    it '.current_game_question' do
+    it '#current_game_question' do
       expect(game_with_questions.current_game_question).to eq(game_with_questions.game_questions[0])
     end
 
-    it '.previous_level' do
-      game_with_questions.current_level = Question::QUESTION_LEVELS.to_a.sample
-      expect(game_with_questions.previous_level).to eq(game_with_questions.current_level - 1)
+    describe '#previous_level' do
+      context 'when level is first' do
+        it 'should equal -1' do
+          expect(game_with_questions.previous_level).to eq(-1)
+        end
+      end
+
+      context 'during the game' do
+        let(:correct_answer) { game_with_questions.current_game_question.correct_answer_key }
+
+        it 'right value for ech level' do
+          Question::QUESTION_LEVELS.max.times do
+            game_with_questions.answer_current_question!(correct_answer)
+            expect(game_with_questions.previous_level).to eq(game_with_questions.current_level - 1)
+          end
+        end
+      end
     end
 
     context '.status' do

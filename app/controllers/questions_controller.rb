@@ -45,7 +45,6 @@ class QuestionsController < ApplicationController
                   " время #{Time.at((Time.now - start_time).to_i).utc.strftime '%S.%L сек'}"
   end
 
-
   private
 
   def authorize_admin!

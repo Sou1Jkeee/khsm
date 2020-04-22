@@ -85,17 +85,6 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template('show')
     end
 
-    it 'answer correct' do
-      put :answer, id: game_with_questions.id, letter: game_with_questions.current_game_question.correct_answer_key
-
-      game = assigns(:game)
-
-      expect(game.finished?).to be false
-      expect(game.current_level).to be > 0
-      expect(response).to redirect_to(game_path(game))
-      expect(flash.empty?).to be true
-    end
-
     it 'alien game' do
       alien_game = create(:game_with_questions)
       get :show, id: alien_game.id
@@ -127,6 +116,28 @@ RSpec.describe GamesController, type: :controller do
 
       expect(response).to redirect_to(game_path(game_with_questions))
       expect(flash[:alert]).to be
+    end
+
+    context 'answer' do
+      it 'when answer correct' do
+        put :answer, id: game_with_questions.id, letter: game_with_questions.current_game_question.correct_answer_key
+
+        game = assigns(:game)
+
+        expect(game.finished?).to be false
+        expect(game.current_level).to be > 0
+        expect(response).to redirect_to(game_path(game))
+        expect(flash.empty?).to be true
+      end
+
+      it 'when answer wrong' do
+        put :answer, id: game_with_questions.id, letter: 'c'
+        game = assigns(:game)
+
+        expect(game.status).to be(:fail)
+        expect(response).to redirect_to(user_path(user))
+        expect(flash[:alert]).to be
+      end
     end
   end
 end

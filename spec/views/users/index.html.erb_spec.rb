@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'support/monkeypatch'
 
 RSpec.describe "users/index", type: :view do
   before(:each) do

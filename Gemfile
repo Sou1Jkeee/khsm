@@ -7,12 +7,10 @@ gem 'devise-i18n'
 
 # Удобная админка для управления любыми сущностями
 gem 'rails_admin'
-
 gem 'uglifier', '>= 1.3.0'
-
 gem 'jquery-rails'
-gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
+gem 'twitter-bootstrap-rails'
 gem 'russian'
 
 group :development, :test do
